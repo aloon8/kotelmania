@@ -21,7 +21,7 @@ public class LoginActivity extends AppCompatActivity {
         Button button = findViewById(R.id.button);
 
         button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) }
+            public void onClick(View v) {
                 editUserName = findViewById(R.id.UserName);
                 String userName = editUserName.getText().toString();
                 editPassNum = findViewById(R.id.Password);
@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(!userName.equals("Dari") && !PassNum.equals("Dari") ) {
                     Toast.makeText(LoginActivity.this, "User or password incorect.", Toast.LENGTH_LONG).show();
                     return ;
-                {}
+                }
 
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivityForResult(intent, 1);
