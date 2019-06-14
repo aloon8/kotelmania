@@ -44,7 +44,6 @@
                 tools:text="status"
                 android:textColor="#00aa00"
                 android:layout_weight="4"/>
-
             <Button
                 android:id="@+id/delete_btn"
                 android:layout_width="40dp"
