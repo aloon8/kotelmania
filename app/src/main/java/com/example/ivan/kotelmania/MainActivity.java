@@ -67,21 +67,12 @@ public class MainActivity extends AppCompatActivity {
                 if (ActivityCompat.checkSelfPermission(MainActivity.this,
                         Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{
-                                    Manifest.permission.ACCESS_FINE_LOCATION
-                            },
-                            1);
-//                    try {
+                                    Manifest.permission.ACCESS_FINE_LOCATION }, 1);
+
 
                     Toast.makeText(MainActivity.this, "no no no...", Toast.LENGTH_LONG).show();
 
-//                    }catch (Exception e) {
-//                        Looper.prepare();
-//                        Toast.makeText(MainActivity.this, "no no no...", Toast.LENGTH_LONG).show();
-//                        Looper.loop();
-//                    }
-
                 } else {
-//                    startGettingLocation();
 
                     LocationConfiguration configuration = new LocationConfiguration.Builder()
                             .keepTracking(true)
@@ -104,9 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
                     manager.get();
                     startGettingLocation();
-
-//                    System.out.println("This will run every 5 seconds");
-
                 }
                 Looper.loop();
             }

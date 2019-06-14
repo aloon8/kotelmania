@@ -7,6 +7,7 @@ import java.util.Date;
 
 //enum Status {sent, accepted};
 public class Note {
+   
     public int id;
     public String heading;
     public String status;
@@ -15,11 +16,11 @@ public class Note {
 
 
     public Note(int id, String heading, String content, String status, String date) {
-        this.id = id;
+        this.id      = id;
         this.heading = heading;
         this.content = content;
-        this.status = status;
-        this.date = date;
+        this.status  = status;
+        this.date    = date;
     }
     
     public static void createTable(SQLiteDatabase db){
@@ -55,10 +56,6 @@ public class Note {
     public String toString(){
         return heading + ", " + content;
     }
-
-
-
-
 
     public void setId(int id) {
         this.id = id;
