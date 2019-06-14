@@ -13,7 +13,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 public class FundraisingActivity extends AppCompatActivity {
-    static int Th = 0;
+    int sum = 0, sum_to_add;
+    SharedPreferences sp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,39 +22,28 @@ public class FundraisingActivity extends AppCompatActivity {
         Button buttonname = (Button) findViewById(R.id.button) ;
         final EditText editText = (EditText) findViewById(R.id.add_heading) ;
         final TextView textView = (TextView) findViewById(R.id.textView) ;
-        Th = readFromInternalStorage();
-        textView.setText("Fundraising: " + Th);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+        try {
+            sum_to_add = sp.getInt("SUM", 0);
+            sum += sum_to_add;
+        }catch (ClassCastException e){
+            e.printStackTrace();
+        }
+        textView.setText("Fundraising: " + sum_to_add);
         buttonname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int temp = Integer.parseInt(editText.getText().toString());
-                Th = readFromInternalStorage();
-                Th += temp;
-                textView.setText("Fundraising: " + Th);
-                saveToInternalStorage(Th);
+                sum_to_add = Integer.parseInt(editText.getText().toString());
+                sum += sum_to_add;
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putInt("SUM", sum);
+                editor.commit();
+                textView.setText("Fundraising: " + sum);
+
 
             }
         });
     }
-    public void saveToInternalStorage(int Fun) {
-        try {
-            FileOutputStream output = openFileOutput("text.txt",MODE_PRIVATE);
-            output.write(Fun);
-            output.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public int readFromInternalStorage(){
-        try{
-            FileInputStream input = openFileInput("text.txt");
-            int r;
-            r=input.read();
-            input.close();
-            return r;
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return -1;
-    }
+
+
 }
