@@ -2,15 +2,18 @@ package com.example.ivan.kotelmania;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
@@ -24,6 +27,11 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.yayandroid.locationmanager.LocationManager;
 import com.yayandroid.locationmanager.configuration.DefaultProviderConfiguration;
 import com.yayandroid.locationmanager.configuration.GooglePlayServicesConfiguration;
@@ -136,10 +144,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //sql part
-        dbHelper = new DBHelper(this);
-        notes = Note.getAllNotes(new DBHelper(this).getReadableDatabase());
-        listView.setAdapter(new MyCustomAdapter(notes, this));
+//        //sql part
+//        dbHelper = new DBHelper(this);
+//        notes = Note.getAllNotes(new DBHelper(this).getReadableDatabase());
+//        listView.setAdapter(new MyCustomAdapter(notes, this));
+        final Context originThis = this;
+        FirebaseDatabase.getInstance().getReference().child(FirebaseAuth.getInstance().getUid()).child("notes").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                notes = new ArrayList<>();
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    for (DataSnapshot noteSnap : dataSnapshot.getChildren()) {
+                        String key = noteSnap.getKey();
+                        String content = noteSnap.child("content").getValue().toString();
+                        String heading = noteSnap.child("heading").getValue().toString();
+                        String status = noteSnap.child("status").getValue().toString();
+                        String date = noteSnap.child("date").getValue().toString();
+                        int id = Integer.parseInt(noteSnap.child("id").getValue().toString());
+
+                        notes.add(new Note(id,key,heading,content,status,date));
+                    }
+                    listView.setAdapter(new MyCustomAdapter(notes,originThis));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
@@ -173,19 +206,20 @@ public class MainActivity extends AppCompatActivity {
                 String headingText = data.getStringExtra("heading");
                 String contentText = data.getStringExtra("content");
                 String activity = data.getStringExtra("activity");
+                String dbKey = data.getStringExtra("dbKey");
                 String date = data.getStringExtra("date");
                 int id = data.getIntExtra("id", -1);
 
                 if (activity.equals("add")) {
-                    Note note = new Note(0, headingText, contentText, "sent", date);
-                    note.addToDB(dbHelper.getWritableDatabase());
+                    Note note = new Note(0, dbKey, headingText, contentText, "sent", date);
+//                    note.addToDB(dbHelper.getWritableDatabase());
                 } else if (activity.equals("edit")) {
-                    Note note = new Note(id, headingText, contentText, "sent", date);
+                    Note note = new Note(id, dbKey, headingText, contentText, "sent", date);
                     note.updateDB(dbHelper.getWritableDatabase());
                     Snackbar.make(findViewById(R.id.listView), "note has been edited!", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
-                refreshNotes();
+//                refreshNotes();
             }
         }
     }

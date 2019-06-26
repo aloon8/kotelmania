@@ -9,18 +9,20 @@ import java.util.Date;
 public class Note {
    
     public int id;
+    public String dbKey;
     public String heading;
     public String status;
     public String content;
     String date;
 
 
-    public Note(int id, String heading, String content, String status, String date) {
+    public Note(int id, String dbKey, String heading, String content, String status, String date) {
         this.id      = id;
         this.heading = heading;
         this.content = content;
         this.status  = status;
         this.date    = date;
+        this.dbKey = dbKey;
     }
     
     public static void createTable(SQLiteDatabase db){
@@ -44,7 +46,7 @@ public class Note {
         Cursor c = db.rawQuery("SELECT * FROM Notes", null);
         c.moveToFirst(); //IMPORTANT!!!!
         while(!c.isAfterLast()){
-            notes.add(new Note(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+            notes.add(new Note(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5)));
             c.moveToNext();
         }
         c.close();

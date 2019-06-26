@@ -15,6 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -86,9 +89,12 @@ public class MyCustomAdapter extends ArrayAdapter<Note> {
             @Override
             public void onClick(View v) {
                 Note note = list.get(position);
-                note.deleteFromDB(MainActivity.getDbHelper().getWritableDatabase());
-                list.remove(position);
-                notifyDataSetChanged();
+//                note.deleteFromDB(MainActivity.getDbHelper().getWritableDatabase());
+                String uid = FirebaseAuth.getInstance().getUid();
+                String dbKey = note.dbKey;
+                FirebaseDatabase.getInstance().getReference().child(uid).child("notes").child(dbKey).removeValue();
+//                list.remove(position);
+//                notifyDataSetChanged();
                 Snackbar.make(v, "note has been removed!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
